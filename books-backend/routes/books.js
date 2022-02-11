@@ -23,10 +23,47 @@ const books = [
  
 /* GET users listing. */
 module.exports = (db) => {
-
+  // get books at page load
   router.get('/', (req, res) => {
       res.json(books);
   });
+
+  // add a new book
+  router.post('/books', (req, res) => {
+    const { task } = req.body;
+    console.log(req.body)
+    const newBook = {
+      id: uniqid(),
+      task,
+      done: false
+    };
+
+    books.push(newBook);
+    console.log(books)
+    res.json(newBook);
+  });
+
+  // update a book 
+  router.patch('/books/:id', (req, res) => {
+    const { id } = req.params;
+    console.log(id)
+    const selectedTask = books.find(book => book.id == id);
+    selectedTask.done = !selectedTask.done;
+    res.json(selectedTask)
+  });
+
+  // remove a book
+  router.delete('/books/:id', (req, res) => {
+    const { id } = req.params;
+    const index = books.findIndex(book => book.id == id )
+    if(index === -1) {
+      return res.json({message: 'no book with that id'});
+    };
+
+    books.splice(index, 1);
+    res.json({message: 'book successfully deleted'})
+  });
+
 
   return router;
 }
