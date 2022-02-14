@@ -1,30 +1,33 @@
-import {useState, useEffect} from 'react';
-import axios from 'axios';
 import './App.css';
+import Book from './components/Book';
+import NewBookForm from './components/NewBookForm';
+import useBookData from './hooks/useBookData';
 
 function App() {
-  const [books, setBooks] = useState([]);
+  const { books, updateBook, addBook, deleteBook } = useBookData();
 
-  useEffect(() => {
-    axios.get('http://localhost:4000/books')
-    .then((res) => {
-      setBooks(res.data);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-  }, [])
+  
 
+  const bookItems = books.map(book => {
+    
+      return(<Book key={book.id} 
+        name={book.name}
+        author={book.author}
+        updateBook={() => updateBook(book.id)}
+        deleteBook={() => deleteBook(book.id)}
+      />
+      )
+  })
 
-const results = books.map((book) => {
-  <p>{book.author}</p>
-})
 
 
   return (
     <div className="App">
-      <h1>Authors:</h1>
-     
+      <h1>Books Listings</h1>
+      <NewBookForm addBook={addBook}/>
+      <section className={'books'}>
+        {bookItems}
+      </section>
     </div>
   );
 }
